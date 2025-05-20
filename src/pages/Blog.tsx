@@ -122,15 +122,14 @@ const Blog = () => {
             <p className="text-gray-600 mb-6">
               Our latest stories are on their way! Meanwhile, explore our ideas on Medium.
             </p>
-            <Button 
-              as="a" 
+            <a 
               href="https://medium.com/@furisvn" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-ocean hover:bg-ocean-light text-white"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-ocean hover:bg-ocean-light text-white h-10 px-4 py-2"
             >
               Visit Medium
-            </Button>
+            </a>
           </div>
         </div>
       </div>
@@ -235,15 +234,14 @@ const Blog = () => {
               <p className="text-gray-600 mb-4">
                 Looking for more insights on coastal real estate and luxury living?
               </p>
-              <Button 
-                as="a" 
+              <a 
                 href="https://medium.com/@furisvn" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-ocean hover:bg-ocean-light text-white gap-2"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-ocean hover:bg-ocean-light text-white h-10 px-4 py-2"
               >
                 Visit Our Medium Page <ArrowRight size={16} />
-              </Button>
+              </a>
             </div>
           </div>
         </div>
