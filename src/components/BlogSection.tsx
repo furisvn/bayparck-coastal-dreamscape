@@ -1,8 +1,6 @@
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight } from 'lucide-react';
 
 interface BlogPost {
   title: string;
@@ -16,6 +14,27 @@ const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const elementsRef = useRef<(HTMLDivElement | null)[]>([]);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    elementsRef.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+    
+    return () => {
+      elementsRef.current.forEach((el) => {
+        if (el) observer.unobserve(el);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
@@ -67,11 +86,13 @@ const BlogSection = () => {
 
   if (loading) {
     return (
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-24 md:py-32 bg-ivory">
+        <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif mb-6">Latest Insights</h2>
-            <p className="text-gray-600">Loading latest articles...</p>
+            <p className="text-sm tracking-widest uppercase text-slate mb-4">Insights</p>
+            <h2 className="text-3xl md:text-4xl mb-6 font-light">Journal</h2>
+            <div className="h-[1px] w-16 bg-slate/30 mx-auto"></div>
+            <p className="text-slate mt-6">Loading latest articles...</p>
           </div>
         </div>
       </section>
@@ -80,18 +101,20 @@ const BlogSection = () => {
 
   if (error) {
     return (
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="py-24 md:py-32 bg-ivory">
+        <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif mb-6">Latest Insights</h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm tracking-widest uppercase text-slate mb-4">Insights</p>
+            <h2 className="text-3xl md:text-4xl mb-6 font-light">Journal</h2>
+            <div className="h-[1px] w-16 bg-slate/30 mx-auto"></div>
+            <p className="text-slate mt-6 mb-8">
               Our latest stories are on their way! Meanwhile, explore our ideas on Medium.
             </p>
             <a 
               href="https://medium.com/@furisvn" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-ocean hover:bg-ocean-light text-white h-10 px-4 py-2"
+              className="inline-block border border-slate px-8 py-3 text-sm text-slate hover:bg-slate hover:text-white transition-all"
             >
               Visit Medium
             </a>
@@ -102,51 +125,105 @@ const BlogSection = () => {
   }
 
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif mb-6">Latest Insights</h2>
-          <p className="text-gray-600 leading-relaxed">
-            Stay informed with our latest articles on coastal real estate trends,
-            investment strategies, and the luxury resort lifestyle.
-          </p>
+    <section className="py-24 md:py-32 bg-ivory">
+      <div className="container mx-auto px-6">
+        <div 
+          className="max-w-3xl mx-auto text-center mb-20 animate-reveal"
+          ref={(el) => (elementsRef.current[0] = el)}
+        >
+          <p className="text-sm tracking-widest uppercase text-slate mb-4">Insights</p>
+          <h2 className="text-3xl md:text-4xl mb-6 font-light">Journal</h2>
+          <div className="h-[1px] w-16 bg-slate/30 mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
-          {posts.slice(0, 4).map((post, index) => (
-            <Card key={index} className="overflow-hidden hover-translate">
-              <div className="h-48 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+          {posts.slice(0, 2).map((post, index) => (
+            <div 
+              key={index} 
+              className="animate-reveal hover-lift"
+              ref={(el) => (elementsRef.current[index+1] = el)}
+              style={{ transitionDelay: `${index * 200}ms` }}
+            >
+              <a 
+                href={post.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="block"
+              >
+                <div className="img-zoom h-80 w-full mb-6">
+                  <img 
+                    src={post.thumbnail} 
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="text-sm text-slate mb-2">{post.pubDate}</div>
+                <h3 className="text-xl mb-4 font-serif">{post.title}</h3>
+                <p className="text-slate text-sm mb-4 line-clamp-3">{post.description}</p>
+                <div className="group flex items-center gap-2 text-slate-dark">
+                  <span className="text-sm">Read Article</span>
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {posts.slice(2, 4).map((post, index) => (
+            <div 
+              key={index} 
+              className="animate-reveal flex gap-6"
+              ref={(el) => (elementsRef.current[index+3] = el)}
+              style={{ transitionDelay: `${(index + 2) * 200}ms` }}
+            >
+              <a 
+                href={post.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="img-zoom w-24 h-24 flex-shrink-0"
+              >
                 <img 
                   src={post.thumbnail} 
                   alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  className="w-full h-full object-cover"
                 />
-              </div>
-              <CardContent className="p-6">
-                <div className="text-sm text-gray-500 mb-2">{post.pubDate}</div>
-                <h3 className="font-serif text-lg mb-3 line-clamp-2">{post.title}</h3>
-                <p className="text-gray-600 text-sm line-clamp-3">{post.description}</p>
-              </CardContent>
-              <CardFooter className="p-6 pt-0">
+              </a>
+              <div>
+                <div className="text-xs text-slate mb-1">{post.pubDate}</div>
+                <h3 className="text-base mb-2 font-serif">
+                  <a 
+                    href={post.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-slate transition-colors"
+                  >
+                    {post.title}
+                  </a>
+                </h3>
                 <a 
                   href={post.link} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-ocean hover:text-ocean-light font-medium text-sm flex items-center gap-2"
+                  className="group flex items-center gap-2 text-slate-dark text-xs"
                 >
-                  Read More <ArrowRight size={14} />
+                  <span>Read</span>
+                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
                 </a>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="text-center">
+        <div 
+          className="mt-16 text-center animate-reveal"
+          ref={(el) => (elementsRef.current[5] = el)}
+        >
           <a 
             href="https://medium.com/@furisvn" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center gap-2 text-ocean hover:text-ocean-light font-medium"
+            className="inline-flex items-center gap-3 text-slate-dark hover:text-slate transition-colors"
           >
             View All Articles <ArrowRight size={16} />
           </a>
